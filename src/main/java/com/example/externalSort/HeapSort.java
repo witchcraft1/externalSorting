@@ -3,8 +3,9 @@ package com.example.externalSort;
 import java.util.List;
 
 public class HeapSort {
-    public static void sort(List<String> arr)
-    {
+    public static void sort(List<String> arr) {
+        if(arr == null) return;
+
         int n = arr.size();
 
         // Build heap (rearrange array)
@@ -25,8 +26,7 @@ public class HeapSort {
 
     // To heapify a subtree rooted with node i which is
     // an index in arr[]. n is size of heap
-    static void heapify(List<String> arr, int n, int i)
-    {
+    static void heapify(List<String> arr, int n, int i) {
         int largest = i; // Initialize largest as root
         int l = 2 * i + 1;
         int r = 2 * i + 2;
