@@ -5,30 +5,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Service {
+    private static final String DEFAULT_PACKAGE = "src/main/resources/";
+
     public static String getRandomString(){
         return "s".repeat((int)(Math.random()*9 + 1));
     }
 
-    public static boolean saveXMbsOfDataIn(String filename, long mbs){
+    public static File saveXMbsOfDataIn(String filename, long mbs){
+        File file = new File(DEFAULT_PACKAGE + filename);
+
         long size = mbs*1024*1024;
         long memoryUsedBytes = 0;
         String s;
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/resources/" + filename,true))) {
-            for (;(memoryUsedBytes+=byteSizeOf(s = getRandomString())) < size;) {
-                bw.write(s + "\n");
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(file,true))) {
+            while (memoryUsedBytes < size) {
+                memoryUsedBytes+= bytesIn(s = getRandomString() + "\n");
+                bw.write(s);
             }
-            System.out.println(memoryUsedBytes);
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
+        return file;
     }
 
-    public static  <T> boolean saveVectorIn(List<T> vector, String fileName) {
+    public static  <T> boolean saveVectorIn(List<T> vector, String packageName, String fileName) {
         if(vector == null) throw new NullPointerException();
 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/resources/" + fileName,true))) {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(packageName + fileName,true))) {
             for (T i:vector) {
                 bw.write(i.toString() + '\n');
             }
@@ -37,6 +41,9 @@ public class Service {
             return false;
         }
         return true;
+    }
+    public static  <T> boolean saveVectorIn(List<T> vector, String fileName) {
+        return saveVectorIn(vector, DEFAULT_PACKAGE, fileName);
     }
 
     public static List<String> getSubVectorFromFile(long maxAvailableSize, BufferedReader sc) throws IOException {
@@ -48,7 +55,7 @@ public class Service {
         }
         ArrayList<String> vector = new ArrayList<>();
         long memoryUsedBytes = 0;
-        while(s != null && (memoryUsedBytes+=byteSizeOf(s)) < maxAvailableSize){
+        while(s != null && (memoryUsedBytes+= bytesIn(s)) < maxAvailableSize){
             vector.add(s);
             s = sc.readLine();
         }
@@ -58,13 +65,13 @@ public class Service {
     }
 
     public  static long countLinesOfFile(String filename) throws IOException {
-        FileReader input = new FileReader("src/main/resources/" + filename);
+        FileReader input = new FileReader(DEFAULT_PACKAGE + filename);
         LineNumberReader lineNumberReader = new LineNumberReader(input);
         while (lineNumberReader.skip(Long.MAX_VALUE) > 0);
         return lineNumberReader.getLineNumber() + 1;
     }
 
-    public static int byteSizeOf(String s){
+    public static int bytesIn(String s){
         return s.length();
     }
 }
