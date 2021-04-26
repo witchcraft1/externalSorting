@@ -55,11 +55,11 @@ public class Service {
         }
         ArrayList<String> vector = new ArrayList<>();
         long memoryUsedBytes = 0;
-        while(s != null && (memoryUsedBytes+= bytesIn(s)) < maxAvailableSize){
+        while(s != null && (memoryUsedBytes+= bytesIn(s +"\n")) < maxAvailableSize){
             vector.add(s);
             s = sc.readLine();
         }
-        System.out.println(vector.size());
+
         vector.trimToSize();
         return vector;
     }

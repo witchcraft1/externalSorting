@@ -19,7 +19,7 @@ public class ExternalSort {
         if(file == null) throw new NullPointerException();
 
         long size = file.length();//in bytes
-        long maxAvailableSize = Runtime.getRuntime().maxMemory();//in bytes
+        long maxAvailableSize = Runtime.getRuntime().freeMemory()/5;//in bytes
 
         int chunksAmount = (int) Math.ceil(1.*size/maxAvailableSize);
 
